@@ -1,10 +1,22 @@
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+from .models import Product, Profile, Comment, Rating
 
 
-from .models import Product, Profile
 
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token['custom_field'] = user.custom_field
+        return token
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        return data
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,7 +34,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ['user', 'age', 'password']
+        fields = ['user', 'age', 'surname', 'name']
 
     def create(self, validater_data):
         user_data = validater_data.pop('user')
@@ -30,3 +42,13 @@ class ProfileSerializer(serializers.ModelSerializer):
         user = User.objects.create(**user_data)
         profile = Profile.objects.create(user=user, **validater_data)
         return profile
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = '__all__'
+
+class RatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = '__all__'

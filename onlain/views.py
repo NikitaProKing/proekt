@@ -2,10 +2,14 @@ from django.shortcuts import render
 from rest_framework import generics, status
 from django.contrib.auth.models import User
 from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .models import Product, Comment, Rating
+from .serializers import ProductSerializer, ProfileSerializer, CommentSerializer, RatingSerializer, \
+    MyTokenObtainPairSerializer
 
-from .models import Product
-from .serializers import ProductSerializer, ProfileSerializer
 
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
 
 class ProductView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
@@ -27,3 +31,13 @@ class UserRegistrationView(generics.CreateAPIView):
             return Response(data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CommentAPIView(generics.CreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = []
+
+class RatingAPIView(generics.CreateAPIView):
+    queryset = Rating.objects.all()
+    serializer_class = RatingSerializer
+    permission_classes = []

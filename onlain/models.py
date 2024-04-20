@@ -27,3 +27,11 @@ class Comment(models.Model):
     user_link = models.ForeignKey(User, on_delete=models.CASCADE)
     text_of_the_comment = models.CharField('текст комментария', max_length=200)
     date_of_creation = models.DateField('дата создания', auto_created=True)
+
+class Rating(models.Model):
+    link_to_the_product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user_link = models.ForeignKey(User, on_delete=models.CASCADE)
+    grade = models.IntegerField(blank=True)
+
+# class Editor(models.Model):
+#
